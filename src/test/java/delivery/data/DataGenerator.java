@@ -14,12 +14,8 @@ public class DataGenerator {
 
     //Faker faker = new Faker(new Locale("ru"));
 
-    public static String generateDate() {
-        return LocalDate.now().plusDays(new Random().nextInt(400) + 3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
-
-    public static String generateDate(String Future) {
-        return LocalDate.now().plusYears(new Random().nextInt(1000) + 100).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    public static String generateDate(int shift) {
+        return LocalDate.now().plusDays(shift).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     public static String generateCity() {
@@ -53,42 +49,66 @@ public class DataGenerator {
     }
 
     //дополнительные методы
-    static List<String> invalidNames() {
+    static List<String> invalidNamesEn() {
         Faker faker = new Faker(new Locale("en"));
         List<String> names = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                names.add(faker.name().firstName());
-            } else if (i % 3 == 0) {
-                names.add(faker.internet().emailAddress());
-            } else {
-                names.add(Integer.toString(faker.number().randomDigit()));
-            }
-
+        for (int i = 0; i < 5; i++) {
+            names.add(faker.name().firstName().toUpperCase());
+        }
+        return names;
+    }
+    static List<String> invalidNamesWithSpecialChars() {
+        Faker faker = new Faker(new Locale("ru"));
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            names.add( faker.regexify(faker.name().fullName().toUpperCase()
+                    +"[!@#$%&*()_+\\=]{1}"));
+        }
+        return names;
+    }
+    static List<String> invalidNamesWithNums() {
+        Faker faker = new Faker(new Locale("ru"));
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            names.add(faker.name().fullName().toUpperCase()
+                    + Integer.toString(faker.number().randomDigit()));
         }
         return names;
     }
 
-    static List<String> invalidPhones() {
+    static List<String> invalidLongPhones() {
         Faker faker = new Faker(new Locale("en"));
         List<String> phones = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                phones.add(faker.number().digits(5) + faker.regexify("[!@#$%&*()_+\\-=]{1}")
-                        + faker.number().digits(10));
-            } else if (i % 3 == 0) {
-                phones.add(faker.number().digits(5) + faker.name().prefix() + faker.number().digits(10));
-            } else {
+        for (int i = 0; i < 5; i++) {
                 phones.add(faker.number().digits(15));
-            }
 
+        }
+        return phones;
+    }
+    static List<String> invalidLongPhonesWithChars() {
+        Faker faker = new Faker(new Locale("en"));
+        List<String> phones = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+                phones.add(faker.number().digits(5)
+                        + faker.name().prefix().toUpperCase()
+                        + faker.number().digits(7));
+        }
+        return phones;
+    }
+    static List<String> invalidLongPhonesWithSpecialChars() {
+        Faker faker = new Faker(new Locale("ru"));
+        List<String> phones = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+                phones.add(faker.number().digits(5)
+                        + faker.regexify("[!@#$%&*()_+\\-=]{1}")
+                        + faker.number().digits(7));
         }
         return phones;
     }
 
     public static String formatter(String toFormat) {
         String tmpString1 = toFormat.replaceAll("\\D", "");
-        if (tmpString1.length() > 12) {
+        if (tmpString1.length() >= 12) {
             tmpString1 = tmpString1.substring(0, 11);
         }
         tmpString1 = MessageFormat.format(
@@ -118,19 +138,27 @@ public class DataGenerator {
         return cities[randomNum];
     }
 
+    static List<String> invalidCitiesWithSpecChars() {
+        Faker faker = new Faker(new Locale("en"));
+        List<String> invalidCities = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            invalidCities.add(generateCity() + faker.regexify("[!@#$%&*()_+\\=]{1}"));
+        }
+        return invalidCities;
+    }
+    static List<String> invalidCitiesWithNums() {
+        Faker faker = new Faker(new Locale("en"));
+        List<String> invalidCities = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            invalidCities.add(generateInvalidCity() + faker.regexify("[1234567890]{1}"));
+        }
+        return invalidCities;
+    }
     static List<String> invalidCities() {
         Faker faker = new Faker(new Locale("en"));
         List<String> invalidCities = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                invalidCities.add(generateInvalidCity() + faker.regexify("[!@#$%&*()_+\\-=]{1}"));
-
-            } else if (i % 3 == 0) {
-                invalidCities.add(generateInvalidCity() + faker.regexify("[1234567890]{1}"));
-            } else {
-                invalidCities.add(generateInvalidCity());
-            }
-
+        for (int i = 0; i < 5; i++) {
+            invalidCities.add(generateInvalidCity());
         }
         return invalidCities;
     }
