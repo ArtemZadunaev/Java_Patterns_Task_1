@@ -53,11 +53,15 @@ class DeliveryTest {
         phoneInput.setValue(validUser.getPhone());
         agreementCheckBox.click();
         submitButton.click();
-        successNotification.should(Condition.visible).shouldHave(text(date));
+        successNotification.should(Condition.visible).shouldHave(text(date))
+                .shouldHave(text("Встреча успешно запланирована на "));;
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE).setValue(date);
         submitButton.click();
+        $("[data-test-id=replan-notification]")
+                .shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"));
         replaneNotificationButton.should(Condition.visible).click();
-        successNotification.should(Condition.visible).shouldHave(text(date));
+        successNotification.should(Condition.visible).shouldHave(text(date))
+                .shouldHave(text("Встреча успешно запланирована на "));
     }
 
     @Test
@@ -77,15 +81,14 @@ class DeliveryTest {
         invalidDate.should(Condition.visible).shouldHave(text("Заказ на выбранную дату невозможен"));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With Invalid Name")
-    @MethodSource("delivery.data.DataGenerator#invalidNamesEn")
-    void shouldNotSendFormWithInvalidNamesEn(String invalidNames) {
+    void shouldNotSendFormWithInvalidNamesEn() {
         var validUser = DataGenerator.Registration.generateUser("ru");
         cityInput.setValue(DataGenerator.generateCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
-        nameInput.setValue(invalidNames);
+        nameInput.setValue(DataGenerator.invalidNamesEn());
         phoneInput.setValue(validUser.getPhone());
         agreementCheckBox.click();
         submitButton.click();
@@ -93,15 +96,14 @@ class DeliveryTest {
                 .shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With Invalid Names With Special Chars")
-    @MethodSource("delivery.data.DataGenerator#invalidNamesWithSpecialChars")
-    void shouldNotSendFormWithInvalidNamesWithSpecialChars(String invalidNames) {
+    void shouldNotSendFormWithInvalidNamesWithSpecialChars() {
         var validUser = DataGenerator.Registration.generateUser("ru");
         cityInput.setValue(DataGenerator.generateCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
-        nameInput.setValue(invalidNames);
+        nameInput.setValue(DataGenerator.invalidNamesWithSpecialChars());
         phoneInput.setValue(validUser.getPhone());
         agreementCheckBox.click();
         submitButton.click();
@@ -109,15 +111,14 @@ class DeliveryTest {
                 .shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With invalid Names With Nums")
-    @MethodSource("delivery.data.DataGenerator#invalidNamesWithNums")
-    void shouldNotSendFormWithInvalidNamesWithNums(String invalidNames) {
+    void shouldNotSendFormWithInvalidNamesWithNums() {
         var validUser = DataGenerator.Registration.generateUser("ru");
         cityInput.setValue(DataGenerator.generateCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
-        nameInput.setValue(invalidNames);
+        nameInput.setValue(DataGenerator.invalidNamesWithNums());
         phoneInput.setValue(validUser.getPhone());
         agreementCheckBox.click();
         submitButton.click();
@@ -125,45 +126,45 @@ class DeliveryTest {
                 .shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Auto Correct With invalid Long Phones")
-    @MethodSource("delivery.data.DataGenerator#invalidLongPhones")
-    void shouldAutoCorrectWithInvalidLongPhones(String phone) {
+    void shouldAutoCorrectWithInvalidLongPhones() {
+        var PhoneNumber = DataGenerator.invalidLongPhones();
         var validUser = DataGenerator.Registration.generateUser("ru");
-        String formPhone = DataGenerator.formatter(phone);
+        String formPhone = DataGenerator.formatter(PhoneNumber);
         cityInput.setValue(validUser.getCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
-        phoneInput.setValue(phone);
+        phoneInput.setValue(PhoneNumber);
         phoneInput.shouldHave(Condition.exactValue(formPhone));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Auto Correct With Invalid Long Phones With Chars")
-    @MethodSource("delivery.data.DataGenerator#invalidLongPhonesWithChars")
-    void shouldAutoCorrectWithInvalidLongPhonesWithChars(String phone) {
+    void shouldAutoCorrectWithInvalidLongPhonesWithChars() {
+        var PhoneNumber = DataGenerator.invalidLongPhonesWithChars();
         var validUser = DataGenerator.Registration.generateUser("ru");
-        String formPhone = DataGenerator.formatter(phone);
+        String formPhone = DataGenerator.formatter(PhoneNumber);
         cityInput.setValue(validUser.getCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
-        phoneInput.setValue(phone);
+        phoneInput.setValue(PhoneNumber);
         phoneInput.shouldHave(Condition.exactValue(formPhone));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Auto Correct With Invalid Long Phones With Special Chars")
-    @MethodSource("delivery.data.DataGenerator#invalidLongPhonesWithSpecialChars")
-    void shouldAutoCorrectWithInvalidLongPhonesWithSpecialChars(String phone) {
+    void shouldAutoCorrectWithInvalidLongPhonesWithSpecialChars() {
         var validUser = DataGenerator.Registration.generateUser("ru");
-        String formPhone = DataGenerator.formatter(phone);
+        var PhoneNumber = DataGenerator.invalidLongPhonesWithSpecialChars();
+        String formPhone = DataGenerator.formatter(PhoneNumber);
         cityInput.setValue(validUser.getCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
-        phoneInput.setValue(phone);
+        phoneInput.setValue(PhoneNumber);
         phoneInput.shouldHave(Condition.exactValue(formPhone));
     }
 
@@ -182,12 +183,12 @@ class DeliveryTest {
                 .shouldHave(text("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678"));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With Invalid City With Nums")
-    @MethodSource("delivery.data.DataGenerator#invalidCitiesWithNums")
-    void shouldNotSendFormWithInvalidCityWithNums(String city) {
+
+    void shouldNotSendFormWithInvalidCityWithNums() {
         var validUser = DataGenerator.Registration.generateUser("ru");
-        cityInput.setValue(city);
+        cityInput.setValue(DataGenerator.invalidCitiesWithNums());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
@@ -198,12 +199,11 @@ class DeliveryTest {
                 .shouldHave(text("Доставка в выбранный город недоступна"));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With Invalid City With Spec Chars")
-    @MethodSource("delivery.data.DataGenerator#invalidCitiesWithSpecChars")
-    void shouldNotSendFormWithInvalidCityWithSpecChars(String city) {
+    void shouldNotSendFormWithInvalidCityWithSpecChars() {
         var validUser = DataGenerator.Registration.generateUser("ru");
-        cityInput.setValue(city);
+        cityInput.setValue(DataGenerator.invalidCitiesWithSpecChars());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
@@ -214,12 +214,11 @@ class DeliveryTest {
                 .shouldHave(text("Доставка в выбранный город недоступна"));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Not Send Form With Invalid City")
-    @MethodSource("delivery.data.DataGenerator#invalidCities")
-    void shouldNotSendFormWithInvalidCity(String city) {
+    void shouldNotSendFormWithInvalidCity() {
         var validUser = DataGenerator.Registration.generateUser("ru");
-        cityInput.setValue(city);
+        cityInput.setValue(DataGenerator.generateInvalidCity());
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE)
                 .setValue(DataGenerator.generateDate(3));
         nameInput.setValue(validUser.getName());
@@ -339,14 +338,15 @@ class DeliveryTest {
         invalidDate.should(Condition.visible).shouldHave(text("Заказ на выбранную дату невозможен"));
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("should Send Form Search City With Two Symbols")
-    @CsvFileSource(files = "src/test/resources/shouldSearchCityWithTwoSymbols.csv")
-    void shouldSendFormSearchCityWithTwoSymbols(String querySymbols, String cityToFind) {
+    void shouldSendFormSearchCityWithTwoSymbols() {
         var validUser = DataGenerator.Registration.generateUser("ru");
+        var city = DataGenerator.generateCity();
+        var twoSymbolsOfCity = city.substring(0,2);
         String date = DataGenerator.generateDate(3);
-        cityInput.setValue(querySymbols);
-        $$("div.popup div.menu-item").find(Condition.text(cityToFind)).click();
+        cityInput.setValue(twoSymbolsOfCity);
+        $$("div.popup div.menu-item").find(Condition.text(city)).click();
         dateInput.press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE).setValue(date);
         nameInput.setValue(validUser.getName());
         phoneInput.setValue(validUser.getPhone());
@@ -354,7 +354,7 @@ class DeliveryTest {
         submitButton.click();
         successNotification.shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(text(date))
-                .shouldHave(text("Успешно"));
+                .shouldHave(text("Встреча успешно запланирована на "));
     }
 
     @Test
@@ -375,6 +375,6 @@ class DeliveryTest {
         submitButton.click();
         successNotification.shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(text(newDay))
-                .shouldHave(text("Успешно"));
+                .shouldHave(text("Встреча успешно запланирована на "));
     }
 }
